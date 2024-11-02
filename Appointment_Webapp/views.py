@@ -5,7 +5,8 @@ from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from .models import User, Appointment
+from .models import *
+from .serializers import *
 from django.conf import settings
 import jwt
 from datetime import datetime, timedelta
@@ -106,3 +107,56 @@ def delete_doctor(request, doctor_email):
         return Response({'message': 'Doctor deleted successfully'}, status=status.HTTP_200_OK)
     except User.DoesNotExist:
         return Response({'error': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_doctors(request):
+    if request.user.account_type != 'Patient':
+        return Response({'error': 'Only patients can access this route'}, status=status.HTTP_403_FORBIDDEN)
+    
+    specialization = request.query_params.get('specialization')
+    if not specialization:
+        return Response({'error': 'Specialization query parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+    doctors = User.objects.filter(account_type='Doctor', specialization=specialization)
+    doctor_data = [{
+        'id': doctor.id,
+        'first_name': doctor.first_name,
+        'last_name': doctor.last_name,
+        'email': doctor.email,
+        'specialization': doctor.specialization
+    } for doctor in doctors]
+
+    return Response(doctor_data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def doctor_availability(request):
+    if request.user.account_type != 'Patient':
+        return Response({'error': 'Only patients can access this route'}, status=status.HTTP_403_FORBIDDEN)
+    
+    doctor_id = request.query_params.get('doctor_id')
+    if not doctor_id:
+        return Response({'error': 'Doctor ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        doctor = User.objects.get(id=doctor_id, account_type='Doctor')
+    except User.DoesNotExist:
+        return Response({'error': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    availability = DoctorAvailability.objects.filter(doctor=doctor)
+    if not availability.exists():
+        return Response({'message': 'No availability found for this doctor'}, status=status.HTTP_404_NOT_FOUND)
+    
+    availability_data = DoctorAvailabilitySerializer(availability, many=True).data
+
+    return Response({
+        'doctor': f"{doctor.first_name} {doctor.last_name}",
+        'availability': availability_data
+    }, status=status.HTTP_200_OK)
+    
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def patient_history(request):
+    return

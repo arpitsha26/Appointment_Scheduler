@@ -11,3 +11,10 @@ class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = ['patient', 'doctor', 'appointment_date', 'status']
+        
+class DoctorAvailabilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DoctorAvailability
+        fields = ['day_of_week', 'start_time', 'end_time']
+    
+    doctor = serializers.CharField(source="doctor.first_name")

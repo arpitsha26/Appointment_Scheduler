@@ -17,3 +17,12 @@ class Appointment(models.Model):
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='doctor_appointments')
     appointment_date = models.DateTimeField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='scheduled')
+    
+class DoctorAvailability(models.Model):
+    doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='availability')
+    day_of_week = models.CharField(max_length=10)  # e.g., "Monday"
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    def __str__(self):
+        return f"{self.doctor.first_name} {self.doctor.last_name} - {self.day_of_week}: {self.start_time} to {self.end_time}"
