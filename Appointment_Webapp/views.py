@@ -1,4 +1,4 @@
-from rest_framework import APIView
+from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
@@ -13,7 +13,7 @@ from django.conf import settings
 import jwt
 from datetime import datetime, timedelta
 
-class SignupView(APIView):
+class Signup(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -24,7 +24,7 @@ class SignupView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class LoginView(APIView):
+class Login(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -33,10 +33,10 @@ class LoginView(APIView):
         user = get_object_or_404(User, email=email)
 
         return Response(status=status.HTTP_200_OK)
-        return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Invalid '}, status=status.HTTP_400_BAD_REQUEST)
 
-class ShowAppointmentsView(APIView):
-    permission_classes = [IsAuthenticated, IsPatient]
+class Showappointments(APIView):
+    permission_classes = [IsPatient]
 
     def get(self, request):
         email = request.query_params.get('email')
@@ -45,7 +45,7 @@ class ShowAppointmentsView(APIView):
         serializer = AppointmentSerializer(appointments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class CreateAppointmentView(APIView):
+class Createappointment(APIView):
     permission_classes = [IsAuthenticated, IsPatient]
 
     def post(self, request):
@@ -55,7 +55,7 @@ class CreateAppointmentView(APIView):
         appointment = Appointment.objects.create(patient=request.user, doctor=doctor, appointment_date=appointment_date)
         return Response(AppointmentSerializer(appointment).data, status=status.HTTP_201_CREATED)
 
-class GetDoctorView(APIView):
+class Getdoctor(APIView):
     permission_classes = [IsAuthenticated, IsPatient]
 
     def get(self, request):
@@ -64,7 +64,7 @@ class GetDoctorView(APIView):
         serializer = UserSerializer(doctors, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class MarkCompletedView(APIView):
+class Markcompleted(APIView):
     permission_classes = [IsAuthenticated, IsDoctor]
 
     def patch(self, request):
@@ -72,5 +72,5 @@ class MarkCompletedView(APIView):
         appointment = get_object_or_404(Appointment, id=appointment_id, doctor=request.user)
         appointment.status = 'completed'
         appointment.save()
-        return Response({'message': 'Appointment marked as completed'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Appointment completed'}, status=status.HTTP_200_OK)
 

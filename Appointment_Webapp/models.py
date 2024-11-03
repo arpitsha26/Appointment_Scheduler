@@ -11,7 +11,7 @@ class User(AbstractUser):
     
     
     USERNAME_FIELD='email'
-    
+    REQUIRED_FIELDS=['username']
     def __str__(self):
         return self.email
     
@@ -23,7 +23,7 @@ class Appointment(models.Model):
     appointment_date = models.DateTimeField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='scheduled')
     
-class DoctorAvailability(models.Model):
+class Doctoravailability(models.Model):
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='availability')
     day_of_week = models.CharField(max_length=10)  
     start_time = models.TimeField() 
