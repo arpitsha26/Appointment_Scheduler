@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import BaseUserManager, AbstractUser
 from django.db import models
 from .choices import *
 class User(AbstractUser):
@@ -9,6 +9,11 @@ class User(AbstractUser):
     account_type = models.CharField(max_length=10, choices=ACCOUNT_TYPE_CHOICES, default='Patient')
     specialization = models.CharField(max_length=100, null=True, blank=True)
     
+    
+    
+    
+    def __str__(self):
+        return self.email
     
     
     
@@ -24,5 +29,4 @@ class DoctorAvailability(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
 
-    def __str__(self):
-        return f"{self.doctor.first_name} {self.doctor.last_name} - {self.day_of_week}: {self.start_time} to {self.end_time}"
+    
