@@ -26,7 +26,7 @@ class Appointment(models.Model):
 class DoctorAvailability(models.Model):
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='availability')
     day_of_week = models.CharField(max_length=10)  # e.g., "Monday"
-    start_time = models.TimeField()
+    start_time = models.TimeField() 
     end_time = models.TimeField()
 
     
