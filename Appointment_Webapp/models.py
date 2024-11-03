@@ -10,7 +10,7 @@ class User(AbstractUser):
     specialization = models.CharField(max_length=100, null=True, blank=True)
     
     
-    
+    USERNAME_FIELD='email'
     
     def __str__(self):
         return self.email
