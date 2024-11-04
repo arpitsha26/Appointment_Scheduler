@@ -14,5 +14,5 @@ urlpatterns = [
     path('password/reset/', passwordreset.as_view(), name='password_rest'),
     path('password/reset/<str:token>/', resetconfirm.as_view(), name='passwordrestconfirm'),
     path('welcome', welcome.as_view(), name='welcome page')
-]
+] 
 
