@@ -25,17 +25,6 @@ class Signup(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class Login(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
-        user = get_object_or_404(User, email=email)
-
-        return Response(status=status.HTTP_200_OK)
-        return Response({'error': 'Invalid '}, status=status.HTTP_400_BAD_REQUEST)
-
 class Showappointments(APIView):
     permission_classes = [IsPatient]
  
@@ -53,6 +42,7 @@ class Createappointment(APIView):
         doctor_id = request.query_params.get('doctor_id')
         doctor = get_object_or_404(User, id=doctor_id, account_type='Doctor')
         appointment_date = request.data.get('appointment_date')
+        appointment_id=request.data.get('appointment_id')
         appointment = Appointment.objects.create(patient=request.user, doctor=doctor, appointment_date=appointment_date)
         return Response(AppointmentSerializer(appointment).data, status=status.HTTP_201_CREATED)
 
@@ -88,7 +78,8 @@ class patienthistory(APIView):
         appointments = Appointment.objects.filter(patient=patient)
         serializer = AppointmentSerializer(appointments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
+
 class doctordelete(APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
     def delete(self, request):
@@ -110,3 +101,18 @@ class passwordreset(APIView):
         reset_link = f"http://127.0.0.1:8000/password/reset/{token}"
         send_mail('Password Reset Request', f'link here: {reset_link}', 'arpitsharma1263@gmail.com', [email])
         return Response({'message': ' reset link sent'}, status=status.HTTP_200_OK)
+
+class resetconfirm(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request, token):
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+            user = get_object_or_404(User, id=payload['user_id'])
+            new_password = request.data.get('new_password')
+            user.set_password(new_password)
+            user.save()
+            return Response({'message': 'Password reset successfully'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                'error': str(e)
+            })

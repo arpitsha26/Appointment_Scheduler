@@ -1,6 +1,7 @@
 from django.contrib.auth.models import BaseUserManager, AbstractUser
 from django.db import models
 from .choices import *
+import uuid
 class User(AbstractUser):
     username = models.CharField(max_length=50, unique=True)
     last_name = models.CharField(max_length=50)
@@ -18,6 +19,7 @@ class User(AbstractUser):
     
     
 class Appointment(models.Model):
+    appointment_id=models.IntegerField(auto_created=True, default=1)
     patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='patient_appointments')
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='doctor_appointments')
     appointment_date = models.DateTimeField()
