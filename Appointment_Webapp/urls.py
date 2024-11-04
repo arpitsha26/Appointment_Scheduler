@@ -7,5 +7,8 @@ urlpatterns = [
     path('createAppointment/', Createappointment.as_view(), name='create_appointment'),
     path('getDoctor/', Getdoctor.as_view(), name='get_doctor'),
     path('doctor/completed/', Markcompleted.as_view(), name='mark_completed'),
+    path('admin/delete/', doctordelete.as_view(), name='delete_particulardoctor'),
+    path('patient/history/', patienthistory.as_view(), name='patienthistory'),
+    path('password/reset/', passwordreset.as_view(), name='password_rest'),
 ]
 
