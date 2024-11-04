@@ -99,7 +99,7 @@ class passwordreset(APIView):
         user = get_object_or_404(User, email=email)
         token = jwt.encode({'user_id': user.id, 'exp': datetime.utcnow() + timedelta(hours=1)}, settings.SECRET_KEY, algorithm='HS256')
         reset_link = f"http://127.0.0.1:8000/password/reset/{token}"
-        send_mail('Password Reset Request', f'link here: {reset_link}', 'arpitsharma1263@gmail.com', [email])
+        send_mail('Password Reset Request', f'link here: {reset_link}', 'arpitsharma1263@gmail.com', [email]) 
         return Response({'message': ' reset link sent'}, status=status.HTTP_200_OK)
 
 class resetconfirm(APIView):
