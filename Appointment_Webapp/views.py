@@ -116,3 +116,15 @@ class resetconfirm(APIView):
             return Response({
                 'error': str(e)
             })
+    
+class welcome(APIView):
+
+    def get(self,request):
+        try:
+            return Response({
+                "msg":"welcome to appointment_scheduler app"
+            })
+        except Exception as e:
+            return Response({
+                "msg":"Internal server error"
+            })
