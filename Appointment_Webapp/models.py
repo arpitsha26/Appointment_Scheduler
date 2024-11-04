@@ -19,7 +19,7 @@ class User(AbstractUser):
     
     
 class Appointment(models.Model):
-    appointment_id=models.IntegerField(auto_created=True, default=1)
+    appointment_id = models.AutoField(primary_key=True)
     patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='patient_appointments')
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='doctor_appointments')
     appointment_date = models.DateTimeField()
