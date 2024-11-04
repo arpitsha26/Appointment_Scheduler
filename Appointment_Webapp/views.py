@@ -37,7 +37,7 @@ class Login(APIView):
 
 class Showappointments(APIView):
     permission_classes = [IsPatient]
-
+ 
     def get(self, request):
         email = request.query_params.get('email')
         patient = get_object_or_404(User, email=email, account_type='Patient')
